@@ -20,6 +20,7 @@
 import sys
 
 import cv2
+import numpy as np
 
 from ikalog.utils import *
 
@@ -117,8 +118,32 @@ class GameStart(object):
         return stage_top[1], rule_top[1]
 
     def match(self, context):
-        map = self.guess_stage(context['engine']['frame'])
-        rule = self.guess_rule(context['engine']['frame'])
+        data = context['scenes'].get('game_start', None)
+        if data is None:
+            context['scenes']['game_start'] = {'last_frames': []}
+        last_frames = context['scenes']['game_start']['last_frames']
+
+        if len(last_frames) > 5:
+            last_frame = last_frames[0]
+            del last_frames[0]
+        else:
+            last_frame = None
+        last_frames.append(context['engine']['frame'])
+
+        if last_frame is None:
+            print('use 1 frame')
+            frame = context['engine']['frame']
+        else:
+            print('use 2 frames')
+            frame = np.minimum(last_frame, context['engine']['frame'])
+
+
+        cv2.imshow('game_start', frame)
+        #cv2.imshow('game_start', abs(context['engine']['frame'] - frame))
+        cv2.waitKey(1)
+
+        map = self.guess_stage(frame)
+        rule = self.guess_rule(frame)
 
         if not map is None:
             context['game']['map'] = map
