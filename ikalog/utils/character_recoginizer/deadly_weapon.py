@@ -174,6 +174,8 @@ class DeadlyWeaponRecoginizer(CharacterRecoginizer):
 
             # サンプル数が足りないので3回学習
             img_normalized = cv2.cvtColor(img_normalized, cv2.COLOR_GRAY2BGR)
+            cv2.imshow('img', img_normalized)
+            cv2.waitKey(100)
             self.add_sample(self.name2id(weapon_name), img_normalized)
 
         IkaUtils.dprint('Writing %s' % model_name)
