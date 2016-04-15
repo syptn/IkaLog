@@ -111,7 +111,7 @@ class MM_BLACK(ImageFilter):
         img_match_v = cv2.inRange(img_gray[:, :], vis_min, vis_max)
         return img_match_v
 
-    def __init__(self, visibility=(0, 32)):
+    def __init__(self, visibility=(0, 40)):
         self.visibility_range = visibility
 
 
