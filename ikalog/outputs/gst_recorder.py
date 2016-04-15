@@ -28,8 +28,10 @@ class GstRec(object):
         thread.start()
 
     def stop_rec(self, filename):
-        self.gst_proc.terminate()
-        os.rename(self.gst_tempfile,filename)
+        if self.gst_proc:
+            self.gst_proc.terminate()
+            os.rename(self.gst_tempfile,filename)
+        self.gst_proc = None
 
     def create_output_filename(self, context):
         map = IkaUtils.map2text(context['game']['map'], unknown='マップ不明')
@@ -48,6 +50,10 @@ class GstRec(object):
 
     def on_game_individual_result(self, context):
         IkaUtils.dprint('stop gstreamer recording.')
+        self.stop_rec(self.create_output_filename(context))
+
+    def on_game_reset(self, context):
+        IkaUtils.dprint('abort gstreamer recording.')
         self.stop_rec(self.create_output_filename(context))
 
     def __init__(self, gst_command=None, output_dir=None):
